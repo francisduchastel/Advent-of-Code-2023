@@ -3,17 +3,11 @@ package advent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.util.HashMap;
-import java.util.Map;
 
 import java.util.Arrays;
 
 
 public class Day12_2 {
-
-    private static Map<String, Long> memo = new HashMap<>();
-
-
     public static void main(String[] args) {
 
         String fullText = "";
@@ -42,7 +36,7 @@ public class Day12_2 {
 
             String[] Numbers_As_String = Symbol_Numbers[1].split(",");
 
-            int[] Numbers = new int[Numbers_As_String.length * 5];
+            int[] Numbers = new int[Numbers_As_String.length];
 
             for (int p = 0; p < Numbers.length; p++) {
                 Numbers[p] = Integer.valueOf(Numbers_As_String[p % Numbers_As_String.length]);
@@ -51,6 +45,13 @@ public class Day12_2 {
 
             String Symbols = Symbol_Numbers[0];
 
+/* 
+            //Solve to Part 1 Using Big Loop
+            int[] Question_Index = Find_Questions(Symbols);
+
+            Sum += Big_Loop(Symbols, Numbers, 0, Question_Index);
+
+ */
             String Symbols_S_M = Symbols += "?";
 
             String[] Possible_Starts = new String[0];
@@ -144,9 +145,6 @@ public class Day12_2 {
 
                     String Pair = Possible_Middles[f1] + Possible_Middles[f2];
 
-                    /* System.out.println(Pair);
-                    System.out.println(Component_Of(Numbers, Pair)); */
-
                     if (Component_Of(Numbers, Pair) == true) {
 
 
@@ -178,9 +176,6 @@ public class Day12_2 {
 
                     String Triple = Possible_Middle_Pairs[f1] + Possible_Middles[f2];
 
-                    /* System.out.println(Pair);
-                    System.out.println(Component_Of(Numbers, Pair)); */
-
                     if (Component_Of(Numbers, Triple) == true) {
 
 
@@ -205,34 +200,6 @@ public class Day12_2 {
             }
 
 
-            
-
-            
-
-
-
-            /* for (int S = 0; S < Possible_Starts.length; S++) {
-
-                System.out.println(Possible_Starts[S]);
-            }
-
-            System.out.println("");
-
-            for (int S = 0; S < Possible_Middle_Trips.length; S++) {
-
-                System.out.println(Possible_Middle_Trips[S]);
-            }
-
-            System.out.println("");
-
-            for (int S = 0; S < Possible_Ends.length; S++) {
-
-                System.out.println(Possible_Ends[S]);
-            }
-
-            System.out.println(""); */
-
-
             System.out.println("Starts: " + Possible_Starts.length + " Middles: " + Possible_Middle_Trips.length + " Ends: " + Possible_Ends.length);
 
 
@@ -242,21 +209,15 @@ public class Day12_2 {
 
             for (int t1 = 0; t1 < Possible_Starts.length; t1++) {
 
-                //System.out.println("Test1");
-
                 List = Possible_Starts[t1];
 
                 for (int t2 = 0; t2 < Possible_Middle_Trips.length; t2++) {
-
-                    //System.out.println("Test2");
 
                     String List_2 = List + Possible_Middle_Trips[t2];
 
                     if (Same_So_Far(List_2, Numbers, List_2.length() - 1) == true) {
 
                         for (int t3 = 0; t3 < Possible_Ends.length; t3++) {
-
-                            //System.out.println("Test5");
 
                             String List_3 = List_2 + Possible_Ends[t3];
 
@@ -280,7 +241,6 @@ public class Day12_2 {
             }
 
 
-
             System.out.println(Number_Added + " --- " + i);
 
             Sum += Number_Added;
@@ -297,92 +257,8 @@ public class Day12_2 {
 
     }
 
-    public static long Small_Loop(String[] Symbols_Splt, int[] Numbers, int Next_Split_Index, String Symbols_so_far) {
 
-
-        long Return = 0L;
-
-
-
-        if (Next_Split_Index == Symbols_Splt.length) {
-            
-
-            int[] Numbers_of_Test = Symbols_To_Numbers(Symbols_so_far);
-
-            if (Arrays.equals(Numbers_of_Test, Numbers) == true) {
-
-                Return++;
-
-            }
-
-
-            return Return;
-
-
-        }
-
-        String Symbols_on = Symbols_Splt[Next_Split_Index];
-
-        if (memo.containsKey(Symbols_so_far + "." + Symbols_on)) {
-
-            return Return += memo.get(Symbols_so_far + "." + Symbols_on);
-        }
-
-        int[] Questions_Array = Find_Questions(Symbols_on);
-
-
-
-        if (Questions_Array.length == 0) {
-
-            Symbols_so_far += "." + Symbols_on;
-
-
-            long Loop_s = Small_Loop(Symbols_Splt, Numbers, Next_Split_Index + 1, Symbols_so_far);
-
-            Return += Loop_s;
-
-            memo.put(Symbols_so_far, Loop_s);
-
-
-
-
-        } else {
-
-            int Number_Questions = Number_Question(Symbols_on);
-
-            for (int z = 0; z < Math.pow(2, Number_Questions); z++) {
-
-                String Binary = Integer.toBinaryString(z);
-
-                while (Binary.length() < Number_Questions) {
-                    Binary = "0" + Binary;
-                }
-
-                String Inputed_Questions = Replace_Questions(Symbols_on, Questions_Array, Binary);
-
-
-                if (Same_So_Far(Symbols_so_far + "." + Inputed_Questions, Numbers, Symbols_so_far.length() + Inputed_Questions.length()) == true ) {
-
-                    
-
-                    Return += Small_Loop(Symbols_Splt, Numbers, Next_Split_Index + 1, Symbols_so_far + "." + Inputed_Questions);
-
-
-                }
-
-
-            }
-
-        }
-
-
-
-
-        return Return;
-
-
-    }
-
+    //Solves Part 1 quicker
     public static long Big_Loop(String Symbols, int[] Numbers, int Next_Question_Index, int[] Question_Index) {
 
         long Return = 0L;
@@ -443,54 +319,6 @@ public class Day12_2 {
 
     }
 
-
-
-    public static boolean Valid_String(String Symbols, int[] Numbers) {
-
-        String[] Symbols_Array_temp = Symbols.split("[.]+");
-
-        String[] Symbols_Array = new String[0];
-
-
-        if (Symbols.charAt(0) == '#') {
-            Symbols_Array = Symbols_Array_temp;
-
-        } else if (Symbols.charAt(0) == '.') {
-
-            try {
-                Symbols_Array = new String[Symbols_Array_temp.length - 1];
-            } catch (NegativeArraySizeException e) {
-                Symbols_Array = Symbols_Array_temp;
-            }
-
-
-            for (int i = 0; i < Symbols_Array.length; i++) {
-            Symbols_Array[i] = Symbols_Array_temp[i + 1];
-            }
-
-        }
-
-        boolean works = true;
-
-        if (Symbols_Array.length != Numbers.length) {
-            works = false;
-        } else {
-
-            for (int i = 0; i < Numbers.length; i++) {
-
-                if (Symbols_Array[i].length() != Numbers[i]) {
-                    works = false;
-                }
-
-            }
-
-        }
-
-        
-
-        return works;
-
-    }
 
     public static int Number_Question(String Symbols) {
 
@@ -672,12 +500,6 @@ public class Day12_2 {
 
                 }
 
-                
-
-
-                
-
-                
 
             }
 
@@ -694,26 +516,6 @@ public class Day12_2 {
 
     }
 
-    public static int[] Append_List(int[] Parent, int[] Adding) {
-
-        int[] New_list = new int[Parent.length + Adding.length];
-
-        for (int i = 0; i < Parent.length; i++) {
-
-            New_list[i] = Parent[i];
-
-        }
-
-        for (int p = Parent.length; p < Parent.length + Adding.length; p++) {
-
-            New_list[p] = Adding[p - Parent.length];
-
-        }
-
-        return New_list;
-
-    }
-
     public static boolean Same_So_Far(String Symbols, int[] Numbers, int Index_up_to) {
 
         boolean Return = true;
@@ -727,16 +529,6 @@ public class Day12_2 {
 
             Symbols_so_Far += Symbols_Array[i];
         }
-
-        /* System.out.println("Same_So_Far:  " + Symbols_so_Far);
-        
-        String Line = "";
-
-        for (int i = 0; i < Numbers.length; i++) {
-            Line += Numbers[i] + " ";
-        }
-        
-        System.out.println(Line); */
 
         int[] Numbers_so_Far = Symbols_To_Numbers(Symbols_so_Far);
 
@@ -773,34 +565,9 @@ public class Day12_2 {
 
         }
 
-        
-
-
-
         return Return;
 
     } 
-    
-    
-    public static boolean Numbers_So_Far(int[] Numbers, int[] Numbers_so_Far) {
-
-        boolean Return = true;
-
-        if (Numbers_so_Far.length > Numbers.length) {
-            Return = false;
-            return Return;
-        }
-
-        for (int i = 0; i < Numbers_so_Far.length; i++) {
-            if (Numbers_so_Far[i] != Numbers[i]) {
-                Return = false;
-                return Return;
-            }
-        }
-
-        return Return;
-
-    }
 
     public static boolean Valid_End(String Symbols, int[] Numbers) {
 
