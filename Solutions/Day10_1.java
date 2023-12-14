@@ -90,7 +90,7 @@ public class Day10_1 {
 
                     if (Pipe_Map[i][p].equals("S")) {
                         if (Pipe_Map[i-1][p].equals("|") || Pipe_Map[i-1][p].equals("7") || Pipe_Map[i-1][p].equals("F")) {
-                            Counting[i+1][p] = Next_Num;
+                            Counting[i-1][p] = Next_Num;
                             Make_A_Change = true;
                         }
 
