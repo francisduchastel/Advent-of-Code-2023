@@ -11,7 +11,13 @@ import java.util.Scanner;
 public class Day19_2 {
     public static void main(String[] args) {
         String fullText = "";
-        String filepath = "Inputs\\Test.txt";
+
+        // Change File name accordingly. Works with Test case, not with full input.
+        //Note, code only works if the blank line between Work_flows and inputs has a blank space " " in it
+        //Feel free to use the Input files in my Github (Advent-of-Code-2023/Inputs) in case you want to try and run it yourself
+
+        String filepath = "Inputs\\[INPUT FILE NAME HERE].txt";
+        
         try {
          // try to open the file and extract its contents
             Scanner scn = new Scanner(new File(filepath));
